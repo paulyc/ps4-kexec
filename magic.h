@@ -207,4 +207,34 @@
 #define kern_off_edid								0x2764100
 #define kern_off_wlanbt							    0x1CDD80
 #define kern_off_kern_reboot						0x206D50
+
+#elif defined PS4_7_00
+//credit: https://github.com/tihmstar
+#define kern_off_printf 0x000BC730 //mira
+#define kern_off_snprintf 0x000BCA30 //mira
+#define kern_off_copyin 0x0002F230 //mira
+#define kern_off_copyout 0x0002F140 //mira
+#define kern_off_copyinstr 0x0002F6E0 //mira
+#define kern_off_kmem_alloc_contig 0x430780 //unsure
+#define kern_off_kmem_free 0x001172C0 //mira
+#define kern_off_pmap_extract 0x3ded30
+#define kern_off_pmap_protect 0x3dff70
+#define kern_off_sched_pin 0x329870
+#define kern_off_sched_unpin 0x329890
+#define kern_off_smp_rendezvous 0x4447a0
+#define kern_off_smp_no_rendevous_barrier 0x444560
+#define kern_off_icc_query_nowait 0x3b2f80
+#define kern_off_kernel_map 0x021C8EE0 //mira
+#define kern_off_sysent 0x01125660 //mira
+#define kern_off_kernel_pmap_store 0x22c5268
+#define kern_off_Starsha_UcodeInfo 0
+#define kern_off_gpu_devid_is_9924 0x4ee3c0
+#define kern_off_gc_get_fw_info 0x4f6830
+#define kern_off_pml4pml4i 0x22c5258
+#define kern_off_dmpml4i 0x22c525c
+#define kern_off_dmpdpi 0x22c5260
+#define kern_off_eap_hdd_key 0x26e0cd0
+#define kern_off_edid 0x27645e0
+#define kern_off_wlanbt 0xdecb0
+#define kern_off_kern_reboot 0x002CD780 //mira
 #endif
