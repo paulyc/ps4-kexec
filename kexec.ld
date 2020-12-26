@@ -10,13 +10,20 @@
 
 ENTRY(kexec_init)
 
+PHDRS
+{
+  headers      PT_PHDR PHDRS;
+  header_load  PT_LOAD PHDRS;
+  code         PT_LOAD;
+}
+
 SECTIONS {
     /* We don't do GOT relocation and rely on nothing ending up using the GOT
      * (-fno-common helps here) */
     /DISCARD/ : { *(.comment) *(.got) }
     _start = .;
     .init : { *(.init) *(.init.*) }
-    .text : { *(.text) *(.text.*) }
+    .text : { *(.text) *(.text.*) } :code
     .data : { *(.data) *(.data.*) }
     .rodata : { *(.rodata) *(.rodata.*) }
     .bss : { *(.bss) *(.bss.*) *(COMMON)}
