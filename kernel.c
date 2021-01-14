@@ -135,6 +135,7 @@ static int resolve_symbols(void)
     RESOLVE_NOERR(eap_hdd_key);
     RESOLVE_NOERR(edid);
     RESOLVE(wlanbt);
+    RESOLVE(kern_reboot);
     return 1;
 }
 
@@ -146,14 +147,15 @@ static int resolve_symbols(void)
 void *kernel_alloc_contig(size_t size)
 {
     // use kmem_alloc_contig instead of contigalloc to avoid messing with a malloc_type...
-    vm_offset_t ret = kern.kmem_alloc_contig(
-        *kern.kernel_map, size, M_ZERO | M_WAITOK, (vm_paddr_t)0,
-        ~(vm_paddr_t)0, 1, 0, VM_MEMATTR_DEFAULT);
+    vm_offset_t ret = 0;
+    while(!(ret = kern.kmem_alloc_contig(
+                 *kern.kernel_map, size, M_ZERO | M_WAITOK, (vm_paddr_t)0,
+                 ~(vm_paddr_t)0, 1, 0, VM_MEMATTR_DEFAULT)));
 
-    if (!ret) {
+    /*if (!ret) {
         kern.printf("Failed to allocate %zud bytes\n", size);
         return NULL;
-    }
+    }*/
     return (void *)PA_TO_DM(kern.pmap_extract(kern.kernel_pmap_store, ret));
 }
 
@@ -254,13 +256,12 @@ static int patch_pmap_check(void)
 
     for (p = (u8*)kern.pmap_protect;
          p < ((u8*)kern.pmap_protect + 0x500); p++) {
-        #ifdef PS4_4_55 // changed to 55 from 74
-        if (!memcmp(p, "\xB8\x06\x00\x00\x00\xC4", 6)) {
-            p[1] = 0;
+        #ifdef PS4_6_72
+        if (!memcmp(p, "\xF8\xF7\xD0\x83\xE0\x06", 6)) { // bytes were slightly different on 6.72
+            p[5] = 0;
             kern.printf("pmap_protect patch successful (found at %p)\n", p);
             return 1;
         }
-            
         /*#ifdef PS4_5_05
         if (!memcmp(p, "\xB8\x06\x00\x00\x00\xC4", 6)) {
             p[1] = 0;
